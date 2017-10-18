@@ -1,0 +1,38 @@
+{
+  "name": "litecord-rest",
+  "version": "0.0.7",
+  "description": "Litecord is a server that tries to comply with Discord's API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litecord/rest.git"
+  },
+  "keywords": [
+    "discord",
+    "discord",
+    "bot",
+    "bot",
+    "discord",
+    "backend",
+    "discord",
+    "bot",
+    "test",
+    "discord",
+    "server",
+    "discord",
+    "source",
+    "code",
+    "chat",
+    "application",
+    "discordapp"
+  ],
+  "author": "lnmds",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/litecord/rest/issues"
+  },
+  "homepage": "https://github.com/litecord/rest#readme"
+}
