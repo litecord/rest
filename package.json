@@ -34,5 +34,8 @@
   "bugs": {
     "url": "https://github.com/litecord/rest/issues"
   },
-  "homepage": "https://github.com/litecord/rest#readme"
+  "homepage": "https://github.com/litecord/rest#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
 }
