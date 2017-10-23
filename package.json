@@ -19,7 +19,9 @@
   "homepage": "https://github.com/litecord/rest#readme",
   "dependencies": {
     "express": "^4.16.2",
-    "npmlog": "^4.1.2"
+    "hat": "^0.0.3",
+    "npmlog": "^4.1.2",
+    "uws": "^8.14.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
