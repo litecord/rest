@@ -94,13 +94,16 @@ export class GatewayClient extends EventEmitter {
             }
             logger.info("Litebridge connection has been opened.");
         });
-        this.on("close", () => logger.warn("Litebrige connection appears to have closed."));
+        this.on("close", (event) => {
+            logger.warn(`Litebrige connection appears to have closed with code ${event.code} and reason "${event.reason}"`);
+        });
         this.on("data", (payload) => {
             const opcodeEvent = OpcodeEvents[payload.op];
             if (!opcodeEvent) {
                 logger.warn(`Unhandled op ${payload.op}`);
                 return;
             }
+            logger.debug(`rcvd: ${JSON.stringify(payload)}`);
             this.emit(opcodeEvent, payload);
         });
         this.on("response", (payload) => {
@@ -119,6 +122,8 @@ export class GatewayClient extends EventEmitter {
             }
             this._hbInterval = setInterval(() => this.send({op: 2}), this.heartbeatInterval);
         });
+        this.on("error", (error) => {
+            console.error(error);
         });
     }
 
@@ -131,6 +136,7 @@ export class GatewayClient extends EventEmitter {
                 this.queue.push({payload, resolve, reject});
                 return;
             }
+            logger.debug(`send: ${JSON.stringify(payload)}`);
             this.socket.send(JSON.stringify(payload), (error) => {
                 if (error) {
                     reject(error);
@@ -189,7 +195,7 @@ export class GatewayClient extends EventEmitter {
             }
             try {
                 const payload = JSON.parse(data);
-                if (payload.op && typeof payload.op === "number") {
+                if (typeof payload.op === "number") {
                     this.emit("data", payload);
                 }
             } catch (e) {
