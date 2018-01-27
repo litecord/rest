@@ -1,3 +1,3 @@
 import {GatewayClient} from "./client";
 
-const client = new GatewayClient("");
+export default GatewayClient;
