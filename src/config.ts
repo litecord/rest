@@ -9,10 +9,18 @@ const configFile = fs.existsSync(configPath) ? require(configPath) : {};
 
 let config = deepmerge({
     bridge: {
-        address: "127.0.0.1",
+        address: "ws://127.0.0.1",
         port: "8081",
         path: "/gw",
         password: "ravioli-ravioli-give-me-the-formuoli",
+    },
+    database: {
+        driver: "postgres",
+        host: "localhost",
+        port: 5432,
+        username: "root",
+        password: "admin",
+        database: "litecord",
     },
 }, configFile as {});
 
@@ -23,7 +31,15 @@ config = deepmerge(config, {
         path: options.bridgePath || config.bridge.path,
         password: options.bridgePassword || config.bridge.password,
     },
-});
+    database: {
+        driver: options.dbDriver || config.database.driver,
+        host: options.dbHost || config.database.host,
+        port: options.dbPort || config.database.port,
+        username: options.dbUsername || config.database.username,
+        password: options.dbPassword || config.database.password,
+        database: options.dbName || config.database.database,
+    },
+} as {});
 
 if (!fs.existsSync(configPath)) {
     fs.writeFileSync(configPath, JSON.stringify(config, undefined, 4));
