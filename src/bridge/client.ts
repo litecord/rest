@@ -74,11 +74,29 @@ export declare interface GatewayClient {
 }
 
 export class GatewayClient extends EventEmitter {
+    /**
+     * The number of milliseconds to loop for sending heartbeat payloads
+     */
     public readonly heartbeatInterval: number = 10000;
 
+    /**
+     * The raw socket connection to the gateway
+     */
     private _socket?: ws;
+
+    /**
+     * The current timer for heartbeats
+     */
     private _hbInterval?: NodeJS.Timer;
+
+    /**
+     * An array of payloads to be sent when the connection is re-established
+     */
     private queue: PendingPayload[] = [];
+
+    /**
+     * A map of request nonces and their promise-resolving functions (for when the server sense a response)
+     */
     private pendingRequests: Map<string, (data: any) => any>;
 
     constructor(private url: string) {
@@ -127,6 +145,13 @@ export class GatewayClient extends EventEmitter {
         });
     }
 
+    /**
+     * Sends a payload to the gateway
+     *
+     * @param payload the payload to send to the gateway
+     * @param resolveOverride an override for the resolve function (used for queued payloads and responses)
+     * @param rejectOverride an override for the reject function (used for responses)
+     */
     public send(payload: Payload, resolveOverride?: (...data: any[]) => any, rejectOverride?: (...errors: any[]) => any): Promise<void> {
         return new Promise((resolve, reject) => {
             resolve = resolveOverride || resolve;
@@ -147,6 +172,12 @@ export class GatewayClient extends EventEmitter {
         });
     }
 
+    /**
+     * Request data from the gateway
+     *
+     * @param name the request name
+     * @param args the arguments, if any
+     */
     public request(name: string, args: any[] = []): Promise<any> {
         return new Promise((resolve, reject) => {
             const requestNonce = nonce();
@@ -162,7 +193,13 @@ export class GatewayClient extends EventEmitter {
         });
     }
 
-    public async dispatch(name: string, args: any[] = []): Promise<void> {
+    /**
+     * Dispatch to the gateway
+     *
+     * @param name the dispatch name
+     * @param args the arguments (required)
+     */
+    public async dispatch(name: string, args: any[]): Promise<void> {
         const dispatchPayload: DispatchPayload = {
             op: 6,
             w: name,
@@ -171,6 +208,9 @@ export class GatewayClient extends EventEmitter {
         await this.send(dispatchPayload);
     }
 
+    /**
+     * Initiate a websocket connection
+     */
     public start(): void {
         this.socket = new ws(this.url);
     }
