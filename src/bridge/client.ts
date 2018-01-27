@@ -94,7 +94,12 @@ export class GatewayClient extends EventEmitter {
         });
         this.on("close", () => logger.warn("Litebrige connection appears to have closed."));
         this.on("data", (payload) => {
-            this.emit(OpcodeEvents[payload.op], payload);
+            const opcodeEvent = OpcodeEvents[payload.op];
+            if (!opcodeEvent) {
+                logger.warn(`Unhandled op ${payload.op}`);
+                return;
+            }
+            this.emit(opcodeEvent, payload);
         });
         this.on("response", (payload) => {
             const resolution = this.pendingRequests.get(payload.n);
