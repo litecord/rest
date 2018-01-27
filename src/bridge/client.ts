@@ -69,13 +69,15 @@ export declare interface GatewayClient {
     on(event: "response", listener: (payload: ResponsePayload) => void): this;
     on(event: "heartbeat_ack", listener: (payload: HeartbeatAckPayload) => void): this;
     on(event: "hello", listener: (payload: HelloPayload) => void): this;
-    on(event: string, listener: () => void): this;
+    on(event: "error", listener: (error: Error) => void): this;
+    on(event: string, listener: (...data: any[]) => void): this;
 }
 
 export class GatewayClient extends EventEmitter {
-    public heartbeatInterval: number = 10000;
+    public readonly heartbeatInterval: number = 10000;
 
     private _socket?: ws;
+    private _hbInterval?: NodeJS.Timer;
     private queue: PendingPayload[] = [];
     private pendingRequests: Map<string, (data: any) => any>;
 
@@ -110,8 +112,13 @@ export class GatewayClient extends EventEmitter {
             resolution(payload.r);
         });
         this.on("hello", (payload) => {
-            this.heartbeatInterval = payload.hb_interval;
+            (this as any).heartbeatInterval = payload.hb_interval;
             this.send({op: 1, password: config.bridge.password});
+            if (typeof this._hbInterval !== "undefined") {
+                clearInterval(this._hbInterval);
+            }
+            this._hbInterval = setInterval(() => this.send({op: 2}), this.heartbeatInterval);
+        });
         });
     }
 
