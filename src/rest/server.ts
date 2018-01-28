@@ -7,6 +7,8 @@ import { GatewayClient } from "../bridge/client";
 import { logger } from "../util/index";
 import { Route, LitecordRequest, LitecordResponse, RouteHandler } from "./util/Route";
 import { send } from "./util/Constants";
+import config from "../config";
+import { getUser } from "../util/hashingUtils";
 
 const ROUTE_ROOT = path.join(__dirname, "routes");
 
@@ -33,7 +35,7 @@ export class DiscordExpress {
         this.server = express();
         this.server.use(cors());
         this.server.use(bodyParser.json());
-        this.server.use((req, res, next) => {
+        this.server.use(async (req, res, next) => {
             const lReq: LitecordRequest = req as any;
             lReq.data = {
                 user: undefined as any,
@@ -43,6 +45,16 @@ export class DiscordExpress {
             lRes.reject = async (code) => {
                 await send(lRes, code);
             };
+            let authorization = req.headers.authorization || req.headers.Authorization;
+            if (authorization) {
+                authorization = typeof authorization === "string" ? authorization : authorization[0];
+                const user = await getUser(authorization);
+                if (user) {
+                    lReq.data.user = user;
+                    lReq.data.authenticated = true;
+                }
+            }
+            next();
         });
         (async () => {
             await this.loadDirectory(path.join(ROUTE_ROOT));
