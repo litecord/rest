@@ -11,7 +11,7 @@ let config = deepmerge({
     bridge: {
         address: "ws://127.0.0.1",
         port: "8081",
-        path: "/gw",
+        path: "/bridge",
         password: "ravioli-ravioli-give-me-the-formuoli",
     },
     database: {
