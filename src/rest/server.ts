@@ -44,9 +44,15 @@ export class DiscordExpress {
                 await send(lRes, code);
             };
         });
-        this.server.use((req, res, next) => {
-            res.status(404).json({code: 0, message: "404: Not Found"});
-        });
+        (async () => {
+            await this.loadDirectory(path.join(ROUTE_ROOT));
+            this.server.use((req, res, next) => {
+                res.status(404).json({code: 0, message: "404: Not Found"});
+            });
+            this.server.listen(config.api.port, () => {
+                logger.info(`REST is listening on port ${config.api.port}`);
+            });
+        })();
     }
 
     /**
