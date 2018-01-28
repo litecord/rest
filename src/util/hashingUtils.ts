@@ -11,12 +11,17 @@ export interface DecodedToken {
 const decodeBase64 = (data: string) => new Buffer(data, "base64").toString("ascii");
 const encodeBase64 = (data: string) => new Buffer(data).toString("base64");
 
+/**
+ * Decodes and validates a signed token
+ *
+ * @param token the token to decode
+ */
 export async function decodeToken(token: string): Promise<DecodedToken | null> {
     const chunks: string[] = token.split(".");
     if (chunks.length !== 3) {
         return null;
     }
-    const [snowflakeBase64, timestampBase64, hmac] = chunks;
+    const [snowflakeBase64, timestampBase64] = chunks;
     const snowflake = decodeBase64(snowflakeBase64);
     const timestampEpoch = (decodeBase64(timestampBase64) as any) * 1;
     if (isNaN(timestampEpoch)) {
@@ -34,7 +39,7 @@ export async function decodeToken(token: string): Promise<DecodedToken | null> {
     const signer = nobi(user.password_salt);
     let hmacData: string;
     try {
-        hmacData = signer.unsign(hmac);
+        hmacData = signer.unsign(token);
     } catch (e) {
         logger.warn(`Failed to decode HMAC data from token:`);
         console.warn(e);
