@@ -21,6 +21,22 @@ export async function keyMirror<T>(object: T): Promise<{[K in keyof T]: K}> {
     return keyMirrorSync(object);
 }
 
+export function onlySync<T, U>(object: T, subset: U): {[K in keyof U]: any} {
+    const keys = Object.keys(object);
+    const filteredObject: {[key: string]: any} = {};
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (typeof (subset as any)[key] !== "undefined") {
+            filteredObject[key] = (object as any)[key];
+        }
+    }
+    return filteredObject as any;
+}
+
+export async function only<T, U>(object: T, subset: U): Promise<{[K in keyof U]: any}> {
+    return onlySync(object, subset);
+}
+
 export function setKeyCasingSync(object: {[key: string]: any}, uppercase: boolean): {[key: string]: any} {
     const newObject: {[key: string]: any} = {};
     const keys = Object.keys(object);
