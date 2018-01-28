@@ -1,5 +1,4 @@
 import {EventEmitter} from "events";
-import * as EventEmitter3 from "eventemitter3";
 import {logger, nonce, setKeyCasingSync, flipObjectSync} from "../util";
 import * as ws from "uws";
 import config from "../config";
