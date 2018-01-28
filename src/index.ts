@@ -23,6 +23,22 @@ bridgeClient.on("request", (request) => {
             break;
     }
 });
+
+BridgeDispatcher.on(ActionTypes.TOKEN_VALIDATE, async (request) => {
+    console.log(request.data);
+    const [token] = request.data;
+    if (typeof token !== "string") {
+        logger.warn("Bad parameter passed for token validation request.");
+        return;
+    }
+    const decodedToken = await decodeToken(token);
+    if (!decodedToken) {
+        await request.respond(false);
+        return;
+    }
+    await request.respond(true);
+});
+
 bridgeClient.on("open", async () => {
     await connect();
     const express = new DiscordExpress(bridgeClient);
