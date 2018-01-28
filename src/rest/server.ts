@@ -118,7 +118,7 @@ export class DiscordExpress {
             const itemPath = path.join(directory, item);
             let isFile: boolean = false;
             try {
-                const itemStats = await fs.stat(item);
+                const itemStats = await fs.stat(itemPath);
                 isFile = itemStats.isFile();
             } catch (e) {
                 logger.warn(`Couldn't load route(s) from ${itemPath}`);
