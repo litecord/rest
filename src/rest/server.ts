@@ -12,6 +12,10 @@ import { getUser } from "../util/hashingUtils";
 
 const ROUTE_ROOT = path.join(__dirname, "routes");
 
+/**
+ * Validates a raw route object
+ * @param route the route to validate
+ */
 const isRoute = (route: any): route is Route => {
     return typeof route === "object"
         && typeof route.opts === "object"
