@@ -7,6 +7,11 @@ function pad(v: any, n: any, c: any = "0") {
     return String(v).length >= n ? String(v) : (String(c).repeat(n) + v).slice(-n);
 }
 
+/**
+ * Generates a Discord-like snowflake. Very basic.
+ *
+ * @param time the time this snowflake is for
+ */
 export function generateSnowflake(time = Date.now()) {
     if (INCREMENT >= 4095) {
         INCREMENT = 0;
