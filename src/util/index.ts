@@ -7,17 +7,17 @@ export function nonce() {
     return md5(randomBytes(128));
 }
 
-export function keyMirrorSync(object: {[key: string]: any}): {[key: string]: string} {
+export function keyMirrorSync<T>(object: T): {[K in keyof T]: K} {
     const newObject: {[key: string]: string} = {};
     const keys = Object.keys(object);
     for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         newObject[key] = key;
     }
-    return newObject;
+    return newObject as any;
 }
 
-export async function keyMirror(object: {[key: string]: any}): Promise<{[key: string]: string}> {
+export async function keyMirror<T>(object: T): Promise<{[K in keyof T]: K}> {
     return keyMirrorSync(object);
 }
 
