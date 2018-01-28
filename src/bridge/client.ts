@@ -1,5 +1,5 @@
 import {EventEmitter} from "events";
-import {logger, nonce, setKeyCasingSync, flipObjectSync} from "../util";
+import {logger, nonce, setKeyCasingSync, flipObjectSync, keyMirror, keyMirrorSync} from "../util";
 import * as ws from "uws";
 import config from "../config";
 
@@ -14,6 +14,10 @@ const OPCODES = {
 };
 
 const OpcodeEvents = flipObjectSync(setKeyCasingSync(OPCODES, false));
+
+export const ActionTypes = keyMirrorSync({
+    TOKEN_VALIDATE: null,
+});
 
 export interface Payload {
     op: number;
@@ -69,8 +73,11 @@ export declare interface GatewayClient {
     on(event: "heartbeat_ack", listener: (payload: HeartbeatAckPayload) => void): this;
     on(event: "hello", listener: (payload: HelloPayload) => void): this;
     on(event: "error", listener: (error: Error) => void): this;
+    on(event: "request", listener: (payload: RequestPayload) => void): this;
     on(event: string, listener: (...data: any[]) => void): this;
 }
+
+const RETRY_INTERVAL = 10000;
 
 export class GatewayClient extends EventEmitter {
     /**
@@ -126,7 +133,7 @@ export class GatewayClient extends EventEmitter {
         this.on("response", (payload) => {
             const resolution = this.pendingRequests.get(payload.n);
             if (!resolution) {
-                logger.error(`Unknown response nonce: ${payload.n}`);
+                logger.warn(`Unknown response nonce: ${payload.n}`);
                 return;
             }
             resolution(payload.r);
@@ -142,6 +149,14 @@ export class GatewayClient extends EventEmitter {
         this.on("error", (error) => {
             console.error(error);
         });
+
+        const retry = () => setTimeout(() => {
+            logger.info("Attempting Litebridge reconnection");
+            this.start();
+        }, RETRY_INTERVAL);
+
+        this.on("close", retry);
+        this.on("error", retry);
     }
 
     /**
@@ -205,6 +220,20 @@ export class GatewayClient extends EventEmitter {
             a: args,
         };
         await this.send(dispatchPayload);
+    }
+
+    /**
+     * Responds to a request payload
+     * @param request the request to respond to (can be partial, only the nonce property is required)
+     * @param data the data to send
+     */
+    public async respond(request: RequestPayload | {n: string}, data: any): Promise<void> {
+        const {n} = request;
+        await this.send({
+            op: 5,
+            n,
+            r: data,
+        } as ResponsePayload);
     }
 
     /**
