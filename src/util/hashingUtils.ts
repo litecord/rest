@@ -55,6 +55,24 @@ export async function decodeToken(token: string): Promise<DecodedToken | null> {
     };
 }
 
+/**
+ * Validates a token and then gets the user it belongs to
+ * @param token the token to validate
+ * @returns undefined if the token is invalid
+ */
+export async function getUser(token: string): Promise<User | undefined> {
+    const parsedToken = await decodeToken(token);
+    if (parsedToken === null) {
+        return undefined;
+    }
+    return await User.findOneById(parsedToken.snowflake);
+}
+
+/**
+ * Creates and signs a token for the given user
+ *
+ * @param user the user to create a token for
+ */
 export async function createToken(user: User | string): Promise<string> {
     if (typeof user === "string") {
         const _user = await User.findOneById(user);
