@@ -1,5 +1,5 @@
 import {EventEmitter} from "events";
-import {logger, nonce, setKeyCasingSync, flipObjectSync, keyMirror, keyMirrorSync} from "../util";
+import {logger, nonce, setKeyCasingSync, flipObjectSync, keyMirror} from "../util";
 import * as ws from "uws";
 import config from "../config";
 
@@ -15,7 +15,7 @@ const OPCODES = {
 
 const OpcodeEvents = flipObjectSync(setKeyCasingSync(OPCODES, false));
 
-export const ActionTypes = keyMirrorSync({
+export const ActionTypes = keyMirror({
     TOKEN_VALIDATE: null,
 });
 

@@ -1,8 +1,8 @@
 import { Route } from "../../../util/Route";
 import Authenticated from "../../../guards/Authenticated";
-import { only, keyMirrorSync } from "../../../../util/index";
+import { only, keyMirror } from "../../../../util/index";
 
-const userReturns = keyMirrorSync({
+const userReturns = keyMirror({
     username: null,
     verified: null,
     mfa_enabled: null,
