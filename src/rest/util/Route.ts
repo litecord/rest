@@ -23,11 +23,26 @@ export interface LitecordResponse extends Response {
 
 export type RouteHandler = (req: LitecordRequest, res: LitecordResponse, next: () => void) => void;
 
+/**
+ * Structure for API routes - API routes are streamed into express and are integrated as efficiently as possible.
+ */
 export interface Route {
     opts: {
+        /**
+         * The publicly accessible path
+         */
         path: string;
+        /**
+         * The request method
+         */
         method: "get" | "post" | "options" | "patch" | "delete";
+        /**
+         * The guards, if any, for this route
+         */
         guards?: RouteHandler[];
     };
+    /**
+     * The actual handler for this route
+     */
     handler: RouteHandler;
 }
