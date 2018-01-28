@@ -7,6 +7,11 @@ const configPath = options.configPath || path.join(__dirname, "config.json");
 
 const configFile = fs.existsSync(configPath) ? require(configPath) : {};
 
+/**
+ * Configuration hierarchy:
+ * Default values are generated, then overridden by the configuration file, then overriden by CLI opts
+ */
+
 let config = deepmerge({
     bridge: {
         address: "ws://127.0.0.1",
