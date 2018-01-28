@@ -6,6 +6,7 @@ export interface DecodedToken {
     snowflake: string;
     timestamp: Date;
     hmac: string;
+    user: User;
 }
 
 const decodeBase64 = (data: string) => new Buffer(data, "base64").toString("ascii");
@@ -52,6 +53,7 @@ export async function decodeToken(token: string): Promise<DecodedToken | null> {
         snowflake,
         timestamp,
         hmac: hmacData,
+        user,
     };
 }
 
@@ -65,7 +67,7 @@ export async function getUser(token: string): Promise<User | undefined> {
     if (parsedToken === null) {
         return undefined;
     }
-    return await User.findOneById(parsedToken.snowflake);
+    return parsedToken.user;
 }
 
 /**
