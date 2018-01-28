@@ -22,6 +22,10 @@ let config = deepmerge({
         password: "admin",
         database: "litecord",
     },
+    api: {
+        gateway: "ws://127.0.0.1:8081/gw",
+        port: 3000,
+    },
 }, configFile as {});
 
 config = deepmerge(config, {
@@ -38,6 +42,10 @@ config = deepmerge(config, {
         username: options.dbUsername || config.database.username,
         password: options.dbPassword || config.database.password,
         database: options.dbName || config.database.database,
+    },
+    api: {
+        gateway: options.gwURI || config.api.gateway,
+        port: options.restPort || config.api.port,
     },
 } as {});
 
