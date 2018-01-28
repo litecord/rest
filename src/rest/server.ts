@@ -94,6 +94,9 @@ export class DiscordExpress {
             console.warn(e);
             return;
         }
+        if (typeof rawFile === "object" && rawFile.default) {
+            rawFile = rawFile.default;
+        }
         if (Array.isArray(rawFile)) {
             for (let i = 0; i < rawFile.length; i++) {
                 this.loadRoute(rawFile[i]);
