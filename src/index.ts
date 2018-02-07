@@ -2,7 +2,7 @@ import GatewayClient from "./bridge";
 import config from "./config";
 import { connect } from "./db/connection";
 import { DiscordExpress } from "./rest/server";
-import { ActionTypes } from "./bridge/client";
+import { BridgeActionTypes } from "./bridge/client";
 import { BridgeDispatcher } from "./bridge/util/BridgeDispatcher";
 import { Request } from "./bridge/util/Request";
 import { logger } from "./util/index";
@@ -16,15 +16,15 @@ bridgeClient.start();
 bridgeClient.on("request", (request) => {
     const requestWrapped: Request = new Request(request);
     switch (request.w) {
-        case ActionTypes.TOKEN_VALIDATE:
-            BridgeDispatcher.emit(ActionTypes.TOKEN_VALIDATE, requestWrapped);
+        case BridgeActionTypes.TOKEN_VALIDATE:
+            BridgeDispatcher.emit(BridgeActionTypes.TOKEN_VALIDATE, requestWrapped);
             break;
         default:
             break;
     }
 });
 
-BridgeDispatcher.on(ActionTypes.TOKEN_VALIDATE, async (request) => {
+BridgeDispatcher.on(BridgeActionTypes.TOKEN_VALIDATE, async (request) => {
     console.log(request.data);
     const [token] = request.data;
     if (typeof token !== "string") {

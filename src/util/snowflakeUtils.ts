@@ -1,7 +1,4 @@
-let INCREMENT: number = 0;
-const EPOCH: number = 1514764800;
-
-import * as Long from "long";
+import * as simpleflake from "simpleflake";
 
 function pad(v: any, n: any, c: any = "0") {
     return String(v).length >= n ? String(v) : (String(c).repeat(n) + v).slice(-n);
@@ -12,13 +9,12 @@ function pad(v: any, n: any, c: any = "0") {
  *
  * @param time the time this snowflake is for
  */
-export function generateSnowflake(time = Date.now()) {
-    if (INCREMENT >= 4095) {
-        INCREMENT = 0;
-    }
-    if (isNaN((new Date(time)).getTime()) && typeof time === "number") {
-        throw new Error(`Invalid timestamp`);
-    }
-    const BINARY = `${pad((time - EPOCH).toString(2), 42)}0000100000${pad((INCREMENT++).toString(2), 12)}`;
-    return Long.fromString(BINARY, 2).toString();
+export function generateSnowflake(time = Date.now()): string {
+    return simpleflake(time).toString("base10");
+}
+
+export function getDate(snowflake: string): Date {
+    const date = new Date();
+    date.setTime(simpleflake.parse(snowflake)[0]);
+    return date;
 }

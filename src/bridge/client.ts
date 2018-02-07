@@ -15,7 +15,7 @@ const OPCODES = {
 
 const OpcodeEvents = flipObjectSync(setKeyCasingSync(OPCODES, false));
 
-export const ActionTypes = keyMirror({
+export const BridgeActionTypes = keyMirror({
     TOKEN_VALIDATE: null,
 });
 

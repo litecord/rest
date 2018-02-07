@@ -20,6 +20,7 @@
     "optimist": "^0.6.1",
     "pg": "^7.4.1",
     "reflect-metadata": "^0.1.12",
+    "simpleflake": "^1.0.1",
     "typeorm": "^0.1.11",
     "uws": "^9.14.0",
     "winston": "^2.4.0"
